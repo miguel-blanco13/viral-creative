@@ -1,0 +1,5 @@
+# Intercepting route para la transición obys del portafolio.
+# El detalle de proyecto abre como overlay (modal) DENTRO del mismo árbol,
+# para que el layoutId de Motion haga el morph tarjeta -> detalle,
+# conservando la URL real /[locale]/work/[slug] para SEO y acceso directo.
+# Reemplaza este .gitkeep por page.tsx (el overlay) cuando lo implementes.

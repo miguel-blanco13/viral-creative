@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "services": "Servicios",
+    "work": "Portafolio",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "cta": "Solicitar cotización →"
+  },
+  "hero": {
+    "eyebrow": "Agencia creativa · Colombia / USA",
+    "headline": "Tu éxito empieza cuando te ven.",
+    "subhead": "Marca · Contenido · Web · Automatización",
+    "scroll": "Desplázate",
+    "cta": "Solicitar cotización →"
+  },
+  "socialProof": {
+    "label": "Marcas que ya confían en nosotros",
+    "stat1": "Proyectos entregados",
+    "stat2": "Clientes que regresan",
+    "stat3": "Países activos",
+    "note": "⌗ Reemplazar con cifras reales verificadas."
+  },
+  "problem": {
+    "eyebrow": "El problema",
+    "title": "Tienes un buen producto. Nadie lo sabe.",
+    "body": "Sin imagen, sin presencia digital y sin contenido que conecte, tu trabajo no llega a quien debería. Tu competencia se ve más grande — aunque no lo sea.",
+    "pivot": "Ahí entramos nosotros."
+  },
+  "services": {
+    "label": "Servicios",
+    "title": "Todo lo que tu marca necesita, en un solo lugar.",
+    "sub": "Elige lo que más te urge, o cuéntanos tu situación y armamos el plan.",
+    "cta": "Cotizar este servicio →",
+    "viewAll": "Ver todos los servicios →"
+  },
+  "portfolio": {
+    "label": "Portafolio",
+    "title": "El trabajo habla.",
+    "sub": "Filtra por categoría y entra a cada proyecto.",
+    "view": "Ver proyecto →",
+    "img": "[Imagen portafolio]",
+    "back": "← Volver",
+    "result": "Resultado",
+    "all": "Todos",
+    "viewAll": "Ver portafolio completo →"
+  },
+  "process": {
+    "label": "Cómo trabajamos",
+    "title": "Claro, rápido y sin sorpresas."
+  },
+  "testimonials": {
+    "label": "Testimonios",
+    "title": "Resultados reales de marcas reales.",
+    "note": "⌗ Reemplazar con testimonios y cifras reales verificadas."
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Preguntas frecuentes"
+  },
+  "cta": {
+    "eyebrow": "¿Listo para crecer?",
+    "title": "Tu próximo cliente ya te está buscando.",
+    "sub": "La diferencia entre encontrarlo o no, es cómo te ves.",
+    "button": "Solicitar cotización ahora →",
+    "micro": "Sin compromiso · Respuesta en menos de 24h · Colombia y EE.UU."
+  },
+  "footer": {
+    "legal": "© 2026 Viral Creative. Todos los derechos reservados.",
+    "tag": "Transformamos ideas en experiencias digitales."
+  },
+  "fab": {
+    "label": "Cotizar",
+    "tip": "Solicitar cotización"
+  },
+  "team": {
+    "label": "Nuestro equipo",
+    "title": "Las personas detrás de la marca.",
+    "sub": "Dos perfiles complementarios con un solo objetivo: hacer crecer tu negocio.",
+    "member1": {
+      "name": "[Nombre]",
+      "role": "Estrategia Digital & Publicidad",
+      "bio": "Especialista en redes sociales, estudio de mercado y publicidad digital. Convierte audiencias en clientes reales con estrategias basadas en datos y contenido que conecta.",
+      "tags": ["Redes Sociales", "Publicidad", "Estudio de mercado"]
+    },
+    "member2": {
+      "name": "[Nombre]",
+      "role": "Desarrollo Web & Automatización",
+      "bio": "Ingeniero de Sistemas con expertise en diseño y desarrollo web, y automatización de procesos. Construye la infraestructura digital que escala tu negocio sin fricciones.",
+      "tags": ["Next.js", "Diseño Web", "Automatización"]
+    }
+  },
+  "aboutPage": {
+    "label": "Nosotros",
+    "title": "Creatividad con propósito.",
+    "sub": "Somos una agencia creativa digital con sede en Colombia y Estados Unidos, construida para marcas que quieren crecer en serio."
+  }
+}

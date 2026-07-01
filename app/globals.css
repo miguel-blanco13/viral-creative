@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   VIRAL CREATIVE — Design tokens (Tailwind v4, CSS-first @theme)
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-bg:        #F5F7FA;
+  --color-surface:   #FFFFFF;
+  --color-midnight:  #0B1026;
+  --color-text:      #1D1D1F;
+  --color-muted:     #6B7280;
+  --color-primary:   #0A84FF;
+  --color-accent:    #4A8DFF;
+  --color-border:    #D2D7E2;
+  --color-whatsapp:  #25D366;
+
+  --font-heading: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-body:    var(--font-inter), "Inter", sans-serif;
+
+  --text-display-xl: clamp(3rem, 1.5rem + 6vw, 7rem);
+  --text-display-lg: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  --text-display-md: clamp(1.8rem, 1.2rem + 3vw, 3rem);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Landing page design tokens (dark theme)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --void: #050507;
+  --bg: #0B1026;
+  --surface: #111827;
+  --surface-2: #161E33;
+  --light-bg: #F5F7FA;
+  --light-surface: #FFFFFF;
+  --light-text: #1D1D1F;
+  --primary: #0A84FF;
+  --primary-hover: #0070E0;
+  --accent: #4A8DFF;
+  --accent-glow: rgba(74, 141, 255, 0.18);
+  --text: #F5F7FA;
+  --muted: #8A93A6;
+  --border: rgba(210, 215, 226, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 40px rgba(10, 132, 255, 0.30);
+  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-body-vc: var(--font-inter), "Inter", sans-serif;
+  --text-display: clamp(2.75rem, 1.4rem + 6vw, 7rem);
+  --text-h1: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+  --text-h2: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  --text-h3: clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+}
+
+/* Keyframe animations */
+@keyframes vc-chevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+@keyframes vc-ring { to { transform: rotate(360deg); } }
+@keyframes vc-blob {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(6%, -4%) scale(1.12); }
+  66% { transform: translate(-5%, 5%) scale(0.94); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes vc-wave { 0%, 100% { transform: scaleY(0.28); } 50% { transform: scaleY(1); } }
+@keyframes vc-fabin { 0% { transform: scale(0); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* Base */
+:root { color-scheme: light; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, .font-heading { font-family: var(--font-heading); }
+
+/* Landing page base reset */
+.vc-root {
+  font-family: var(--font-body-vc);
+  background: var(--void);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+.vc-root *, .vc-root *::before, .vc-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.vc-root a { color: inherit; text-decoration: none; }
+.vc-root button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+.vc-root ::selection { background: var(--primary); color: #fff; }
+.vc-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

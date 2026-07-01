@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "services": "Services",
+    "work": "Work",
+    "about": "About",
+    "contact": "Contact",
+    "cta": "Get a quote →"
+  },
+  "hero": {
+    "eyebrow": "Creative agency · Colombia / USA",
+    "headline": "Your success starts when they see you.",
+    "subhead": "Brand · Content · Web · Automation",
+    "scroll": "Scroll",
+    "cta": "Get a quote →"
+  },
+  "socialProof": {
+    "label": "Brands that already trust us",
+    "stat1": "Projects delivered",
+    "stat2": "Returning clients",
+    "stat3": "Active countries",
+    "note": "⌗ Replace with real, verified figures."
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "title": "You've got a good product. Nobody knows it.",
+    "body": "Without an image, a digital presence, or content that connects, your work never reaches the people it should. Your competitors look bigger — even when they aren't.",
+    "pivot": "That's where we come in."
+  },
+  "services": {
+    "label": "Services",
+    "title": "Everything your brand needs, in one place.",
+    "sub": "Pick what you need most, or tell us where you are and we'll build the plan.",
+    "cta": "Quote this service →",
+    "viewAll": "See all services →"
+  },
+  "portfolio": {
+    "label": "Work",
+    "title": "The work speaks.",
+    "sub": "Filter by category and open any project.",
+    "view": "View project →",
+    "img": "[Portfolio image]",
+    "back": "← Back",
+    "result": "Result",
+    "all": "All",
+    "viewAll": "See full portfolio →"
+  },
+  "process": {
+    "label": "How we work",
+    "title": "Clear, fast, and no surprises."
+  },
+  "testimonials": {
+    "label": "Testimonials",
+    "title": "Real results from real brands.",
+    "note": "⌗ Replace with real, verified testimonials and figures."
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Frequently asked questions"
+  },
+  "cta": {
+    "eyebrow": "Ready to grow?",
+    "title": "Your next client is already looking for you.",
+    "sub": "Whether they find you or not comes down to how you look.",
+    "button": "Request a quote now →",
+    "micro": "No commitment · Response in under 24h · Colombia & USA"
+  },
+  "footer": {
+    "legal": "© 2026 Viral Creative. All rights reserved.",
+    "tag": "We turn ideas into digital experiences."
+  },
+  "fab": {
+    "label": "Quote",
+    "tip": "Request a quote"
+  },
+  "team": {
+    "label": "Our team",
+    "title": "The people behind the brand.",
+    "sub": "Two complementary profiles with one goal: grow your business.",
+    "member1": {
+      "name": "[Name]",
+      "role": "Digital Strategy & Advertising",
+      "bio": "Specialist in social media, market research, and digital advertising. Turns audiences into real clients through data-driven strategies and content that connects.",
+      "tags": ["Social Media", "Advertising", "Market Research"]
+    },
+    "member2": {
+      "name": "[Name]",
+      "role": "Web Development & Automation",
+      "bio": "Systems engineer with expertise in web design, development, and process automation. Builds the digital infrastructure that scales your business without friction.",
+      "tags": ["Next.js", "Web Design", "Automation"]
+    }
+  },
+  "aboutPage": {
+    "label": "About us",
+    "title": "Creativity with purpose.",
+    "sub": "A digital creative agency based in Colombia, built for brands that want to grow for real."
+  }
+}
