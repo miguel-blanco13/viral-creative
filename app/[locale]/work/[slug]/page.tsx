@@ -1,10 +1,39 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { PROJECTS } from '@/components/home/data'
 import { ProjectModal } from '@/components/work/ProjectModal'
+import type { Locale } from '@/lib/content-types'
+import { getProjectBySlug, getProjectSlugs } from '@/lib/content'
+import { SITE_URL } from '@/lib/seo'
 
 interface WorkPageProps {
   params: Promise<{ locale: string; slug: string }>
+}
+
+// Permite renderizar bajo demanda slugs añadidos en el CMS después del build.
+export const dynamicParams = true
+
+export async function generateMetadata({
+  params,
+}: WorkPageProps): Promise<Metadata> {
+  const { locale, slug } = await params
+  const project = await getProjectBySlug(slug, locale as Locale)
+  if (!project) return {}
+
+  const url = `${SITE_URL}/${locale}/work/${slug}`
+  const description = project.description || undefined
+  return {
+    title: project.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      title: project.name,
+      description,
+      url,
+      images: [project.thumbnailUrl ?? '/images/logo.png'],
+    },
+  }
 }
 
 /**
@@ -16,19 +45,17 @@ interface WorkPageProps {
  * route toma el control y este componente no se renderiza.
  */
 export async function generateStaticParams() {
-  // Pre-render de todas las combinaciones locale × slug para SSG.
-  // Cuando se integre Sanity, traer slugs dinámicos aquí con generateStaticParams.
+  // Slugs desde Sanity (o fallback a los datos por defecto) × locales.
+  const slugs = await getProjectSlugs()
   const locales = ['es', 'en']
-  return locales.flatMap((locale) =>
-    PROJECTS.map((p) => ({ locale, slug: p.slug }))
-  )
+  return locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })))
 }
 
 export default async function WorkPage({ params }: WorkPageProps) {
   const { locale, slug } = await params
   setRequestLocale(locale)
 
-  const project = PROJECTS.find((p) => p.slug === slug)
+  const project = await getProjectBySlug(slug, locale as Locale)
   if (!project) notFound()
 
   const tPF = await getTranslations('portfolio')

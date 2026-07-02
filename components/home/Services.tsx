@@ -1,11 +1,11 @@
 'use client'
 
-import { SERVICES } from './data'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitHeading } from '@/components/motion/SplitHeading'
+import type { ServiceVM } from '@/lib/content-types'
 
 interface ServicesProps {
-  locale: string
+  services: ServiceVM[]
   t: {
     label: string
     title: string
@@ -17,8 +17,7 @@ interface ServicesProps {
   isPage?: boolean
 }
 
-export function Services({ locale, t, waNumber, isPage = false }: ServicesProps) {
-  const es = locale === 'es'
+export function Services({ services, t, waNumber, isPage = false }: ServicesProps) {
 
   return (
     <section
@@ -60,8 +59,8 @@ export function Services({ locale, t, waNumber, isPage = false }: ServicesProps)
         </Reveal>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginTop: '56px' }}>
-          {SERVICES.map((s, i) => {
-            const waHref = `https://wa.me/${waNumber}?text=${s.wa}`
+          {services.map((s, i) => {
+            const waHref = `https://wa.me/${waNumber}?text=${encodeURIComponent(s.waText)}`
             return (
               <Reveal key={s.n} from="up" delay={i * 0.08} start="top 90%">
               <div
@@ -75,13 +74,13 @@ export function Services({ locale, t, waNumber, isPage = false }: ServicesProps)
                 </span>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
                   <span style={{ fontFamily: 'var(--font-body-vc)', fontSize: '.74rem', textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--primary)', background: 'rgba(10,132,255,0.12)', padding: '5px 12px', borderRadius: 'var(--radius-full)' }}>
-                    {es ? s.catEs : s.catEn}
+                    {s.category}
                   </span>
                   <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 'var(--text-h3)', color: 'var(--light-text)', lineHeight: 1.1 }}>
-                    {es ? s.nameEs : s.nameEn}
+                    {s.name}
                   </h3>
                   <p style={{ fontSize: 'var(--text-base)', color: '#5B6577', lineHeight: 1.5 }}>
-                    {es ? s.descEs : s.descEn}
+                    {s.description}
                   </p>
                   <a
                     href={waHref}

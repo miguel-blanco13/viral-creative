@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Link, usePathname, useRouter } from '@/lib/navigation'
+import { CtaButton } from '@/components/ui/CtaButton'
 
 interface NavProps {
   locale: string
@@ -118,40 +119,9 @@ export function Nav({ locale, t, waNumber }: NavProps) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           {!isMobile && (
-            <a
-              href={waHref}
-              target="_blank"
-              rel="noopener"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                background: 'var(--primary)',
-                color: '#fff',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 500,
-                textTransform: 'uppercase',
-                letterSpacing: '.08em',
-                fontSize: 'var(--text-sm)',
-                padding: '12px 24px',
-                borderRadius: 'var(--radius-full)',
-                transition: 'background .2s,transform .2s,box-shadow .2s',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget
-                el.style.background = 'var(--primary-hover)'
-                el.style.transform = 'translateY(-2px)'
-                el.style.boxShadow = 'var(--shadow-glow)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget
-                el.style.background = 'var(--primary)'
-                el.style.transform = 'none'
-                el.style.boxShadow = ''
-              }}
-            >
+            <CtaButton href={waHref} size="sm">
               {t.cta}
-            </a>
+            </CtaButton>
           )}
           {isMobile && (
             <button
@@ -231,27 +201,9 @@ export function Nav({ locale, t, waNumber }: NavProps) {
           </Link>
         ))}
 
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener"
-          onClick={closeMenu}
-          style={{
-            marginTop: '24px',
-            textAlign: 'center',
-            background: 'var(--primary)',
-            color: '#fff',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 500,
-            textTransform: 'uppercase',
-            letterSpacing: '.08em',
-            fontSize: 'var(--text-base)',
-            padding: '16px',
-            borderRadius: 'var(--radius-full)',
-          }}
-        >
+        <CtaButton href={waHref} size="lg" block onClick={closeMenu} style={{ marginTop: '24px' }}>
           {t.cta}
-        </a>
+        </CtaButton>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '32px', fontSize: 'var(--text-sm)' }}>
           <button

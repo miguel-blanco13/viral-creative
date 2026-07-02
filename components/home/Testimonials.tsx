@@ -1,10 +1,10 @@
 'use client'
 
-import { TESTIMONIALS } from './data'
 import { Reveal } from '@/components/motion/Reveal'
+import type { TestimonialVM } from '@/lib/content-types'
 
 interface TestimonialsProps {
-  locale: string
+  testimonials: TestimonialVM[]
   t: {
     label: string
     title: string
@@ -15,8 +15,7 @@ interface TestimonialsProps {
   }
 }
 
-export function Testimonials({ locale, t }: TestimonialsProps) {
-  const es = locale === 'es'
+export function Testimonials({ testimonials, t }: TestimonialsProps) {
 
   return (
     <section style={{ position: 'relative', background: 'var(--bg)', borderRadius: '40px 40px 0 0', padding: '128px 40px', overflow: 'hidden' }}>
@@ -65,20 +64,20 @@ export function Testimonials({ locale, t }: TestimonialsProps) {
 
         {/* Cards con stagger */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px', marginTop: '64px' }}>
-          {TESTIMONIALS.map((tst, i) => (
-            <Reveal key={tst.ini} from="up" delay={i * 0.12} start="top 88%">
+          {testimonials.map((tst, i) => (
+            <Reveal key={tst.id} from="up" delay={i * 0.12} start="top 88%">
               <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '18px', height: '100%' }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '3rem', lineHeight: '.6', color: 'var(--primary)' }}>&ldquo;</span>
                 <p style={{ fontSize: 'var(--text-lg)', fontStyle: 'italic', color: 'rgba(245,247,250,0.85)', lineHeight: 1.5, flex: 1 }}>
-                  &ldquo;{es ? tst.qEs : tst.qEn}&rdquo;
+                  &ldquo;{tst.quote}&rdquo;
                 </p>
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent-glow)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '.85rem', flexShrink: 0 }}>
-                    {tst.ini}
+                    {tst.initials}
                   </span>
                   <div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: '#fff', fontSize: 'var(--text-base)' }}>{tst.name}</div>
-                    <div style={{ color: 'var(--muted)', fontSize: 'var(--text-sm)' }}>{es ? tst.roleEs : tst.roleEn}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: '#fff', fontSize: 'var(--text-base)' }}>{tst.author}</div>
+                    <div style={{ color: 'var(--muted)', fontSize: 'var(--text-sm)' }}>{tst.role}</div>
                   </div>
                 </div>
               </div>

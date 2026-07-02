@@ -1,6 +1,7 @@
 'use client'
 
 import { Reveal } from '@/components/motion/Reveal'
+import { CtaButton } from '@/components/ui/CtaButton'
 
 interface CtaFinalProps {
   t: {
@@ -86,19 +87,9 @@ export function CtaFinal({ t, waNumber }: CtaFinalProps) {
         </Reveal>
 
         <Reveal from="up" delay={0.32}>
-          <div style={{ position: 'relative', display: 'inline-flex', padding: '10px', marginTop: '8px' }}>
-            <span style={{ position: 'absolute', inset: 0, border: '1.5px solid var(--primary)', borderRadius: 'var(--radius-full)', opacity: .4, animation: 'vc-ring 2.5s linear infinite' }} />
-            <a
-              href={waHref}
-              target="_blank"
-              rel="noopener"
-              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.08em', fontSize: 'var(--text-base)', padding: '18px 48px', borderRadius: 'var(--radius-full)', boxShadow: 'var(--shadow-glow)', transition: 'background .2s,transform .2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--primary-hover)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.transform = 'none' }}
-            >
-              {t.button}
-            </a>
-          </div>
+          <CtaButton href={waHref} size="lg" withPulse>
+            {t.button}
+          </CtaButton>
         </Reveal>
 
         <Reveal from="up" delay={0.44}>

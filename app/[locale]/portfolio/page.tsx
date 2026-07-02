@@ -1,10 +1,29 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Nav } from '@/components/layout/Nav'
 import { Portfolio } from '@/components/home/Portfolio'
 import { Footer } from '@/components/layout/Footer'
 import { WhatsAppFab } from '@/components/ui/WhatsAppFab'
+import type { Locale } from '@/lib/content-types'
+import { getProjects, getSiteSettings } from '@/lib/content'
+import { pageMetadata } from '@/lib/seo'
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '573000000000'
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const es = locale === 'es'
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/portfolio',
+    title: es ? 'Portafolio' : 'Portfolio',
+    description: es
+      ? 'Proyectos de branding, web y contenido. Casos reales con resultados concretos.'
+      : 'Branding, web and content projects. Real cases with concrete results.',
+  })
+}
 
 export default async function PortfolioPage({
   params,
@@ -13,6 +32,7 @@ export default async function PortfolioPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const loc = locale as Locale
 
   const [tNav, tPF, tFooter, tFab] = await Promise.all([
     getTranslations('nav'),
@@ -21,8 +41,14 @@ export default async function PortfolioPage({
     getTranslations('fab'),
   ])
 
+  const [settings, projects] = await Promise.all([
+    getSiteSettings(loc),
+    getProjects(loc),
+  ])
+  const waNumber = settings.whatsappNumber
+
   return (
-    <div className="vc-root">
+    <div className="vc-root" style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
       <Nav
         locale={locale}
         t={{
@@ -31,12 +57,13 @@ export default async function PortfolioPage({
           about: tNav('about'),
           cta: tNav('cta'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       {/* isPage=true: elimina border-radius superior y aumenta paddingTop */}
       <Portfolio
         locale={locale}
+        projects={projects}
         t={{
           label: tPF('label'),
           title: tPF('title'),
@@ -55,16 +82,15 @@ export default async function PortfolioPage({
         t={{
           legal: tFooter('legal'),
           tag: tFooter('tag'),
-          services: tNav('services'),
-          work: tNav('work'),
-          about: tNav('about'),
-          contact: tNav('contact'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
+        email={settings.email}
+        instagramUrl={settings.instagramUrl}
+        tiktokUrl={settings.tiktokUrl}
       />
 
       <WhatsAppFab
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
         labelText={tFab('label')}
         tipText={tFab('tip')}
       />

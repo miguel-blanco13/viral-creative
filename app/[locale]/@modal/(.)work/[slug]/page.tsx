@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { PROJECTS } from '@/components/home/data'
 import { ProjectModal } from '@/components/work/ProjectModal'
+import type { Locale } from '@/lib/content-types'
+import { getProjectBySlug } from '@/lib/content'
 
 interface ModalPageProps {
   params: Promise<{ locale: string; slug: string }>
@@ -24,7 +25,7 @@ export default async function ModalPage({ params }: ModalPageProps) {
   const { locale, slug } = await params
   setRequestLocale(locale)
 
-  const project = PROJECTS.find((p) => p.slug === slug)
+  const project = await getProjectBySlug(slug, locale as Locale)
   if (!project) notFound()
 
   const tPF = await getTranslations('portfolio')

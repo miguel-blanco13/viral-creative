@@ -1,16 +1,12 @@
 'use client'
 
-import { SERVICES } from './data'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitHeading } from '@/components/motion/SplitHeading'
 import { Link } from '@/lib/navigation'
-
-// Índices de los 4 servicios que representan los pilares: Marca · Contenido · Web · Automatización
-// Coincide exactamente con el subhead del Hero para coherencia de mensaje.
-const PREVIEW_INDICES = [0, 2, 4, 5]
+import type { ServiceVM } from '@/lib/content-types'
 
 interface ServicesPreviewProps {
-  locale: string
+  services: ServiceVM[]
   t: {
     label: string
     title: string
@@ -21,9 +17,10 @@ interface ServicesPreviewProps {
   waNumber: string
 }
 
-export function ServicesPreview({ locale, t, waNumber }: ServicesPreviewProps) {
-  const es = locale === 'es'
-  const previewServices = PREVIEW_INDICES.map((i) => SERVICES[i])
+export function ServicesPreview({ services, t, waNumber }: ServicesPreviewProps) {
+  // Los 4 primeros servicios como vista previa de los pilares en el home.
+  // El orden completo se gestiona desde el CMS.
+  const previewServices = services.slice(0, 4)
 
   return (
     <section
@@ -70,7 +67,7 @@ export function ServicesPreview({ locale, t, waNumber }: ServicesPreviewProps) {
         {/* 4 cards de los pilares estratégicos */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginTop: '56px' }}>
           {previewServices.map((s, i) => {
-            const waHref = `https://wa.me/${waNumber}?text=${s.wa}`
+            const waHref = `https://wa.me/${waNumber}?text=${encodeURIComponent(s.waText)}`
             return (
               <Reveal key={s.n} from="up" delay={i * 0.08} start="top 90%">
                 <div
@@ -103,16 +100,16 @@ export function ServicesPreview({ locale, t, waNumber }: ServicesPreviewProps) {
                       letterSpacing: '.08em', color: 'var(--primary)', background: 'rgba(10,132,255,0.12)',
                       padding: '5px 12px', borderRadius: 'var(--radius-full)',
                     }}>
-                      {es ? s.catEs : s.catEn}
+                      {s.category}
                     </span>
                     <h3 style={{
                       fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 'var(--text-h3)',
                       color: 'var(--light-text)', lineHeight: 1.1,
                     }}>
-                      {es ? s.nameEs : s.nameEn}
+                      {s.name}
                     </h3>
                     <p style={{ fontSize: 'var(--text-base)', color: '#5B6577', lineHeight: 1.5 }}>
-                      {es ? s.descEs : s.descEn}
+                      {s.description}
                     </p>
                     <a
                       href={waHref}

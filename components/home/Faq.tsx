@@ -1,19 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { FAQ } from './data'
+import type { FaqVM } from '@/lib/content-types'
 
 interface FaqProps {
-  locale: string
+  faqs: FaqVM[]
   t: {
     label: string
     title: string
   }
 }
 
-export function Faq({ locale, t }: FaqProps) {
+export function Faq({ faqs, t }: FaqProps) {
   const [open, setOpen] = useState<number | null>(null)
-  const es = locale === 'es'
 
   const toggle = (i: number) => setOpen(open === i ? null : i)
 
@@ -28,15 +27,15 @@ export function Faq({ locale, t }: FaqProps) {
         </h2>
 
         <div style={{ marginTop: '48px', borderTop: '1px solid var(--border)' }}>
-          {FAQ.map((f, i) => (
-            <div key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+          {faqs.map((f, i) => (
+            <div key={f.id} style={{ borderBottom: '1px solid var(--border)' }}>
               <button
                 onClick={() => toggle(i)}
                 aria-expanded={open === i}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '22px 0', textAlign: 'left', color: 'var(--light-text)' }}
               >
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 500, fontSize: 'var(--text-lg)' }}>
-                  {es ? f.qEs : f.qEn}
+                  {f.question}
                 </span>
                 <svg
                   width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round"
@@ -47,7 +46,7 @@ export function Faq({ locale, t }: FaqProps) {
               </button>
               <div style={{ maxHeight: open === i ? '400px' : '0', overflow: 'hidden', transition: 'max-height .25s ease' }}>
                 <p style={{ color: '#5B6577', fontSize: 'var(--text-base)', lineHeight: 1.6, paddingBottom: '22px', maxWidth: '62ch' }}>
-                  {es ? f.aEs : f.aEn}
+                  {f.answer}
                 </p>
               </div>
             </div>

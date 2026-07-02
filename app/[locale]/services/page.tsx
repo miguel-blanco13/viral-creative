@@ -1,11 +1,30 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Nav } from '@/components/layout/Nav'
 import { Services } from '@/components/home/Services'
 import { CtaFinal } from '@/components/home/CtaFinal'
 import { Footer } from '@/components/layout/Footer'
 import { WhatsAppFab } from '@/components/ui/WhatsAppFab'
+import type { Locale } from '@/lib/content-types'
+import { getServices, getSiteSettings } from '@/lib/content'
+import { pageMetadata } from '@/lib/seo'
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '573000000000'
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const es = locale === 'es'
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/services',
+    title: es ? 'Servicios' : 'Services',
+    description: es
+      ? 'Branding, fotografía, contenido, gestión de redes, desarrollo web, automatización y publicidad digital.'
+      : 'Branding, photography, content, social media, web development, automation and digital advertising.',
+  })
+}
 
 export default async function ServicesPage({
   params,
@@ -14,6 +33,7 @@ export default async function ServicesPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const loc = locale as Locale
 
   const [tNav, tSrv, tCta, tFooter, tFab] = await Promise.all([
     getTranslations('nav'),
@@ -22,6 +42,12 @@ export default async function ServicesPage({
     getTranslations('footer'),
     getTranslations('fab'),
   ])
+
+  const [settings, services] = await Promise.all([
+    getSiteSettings(loc),
+    getServices(loc),
+  ])
+  const waNumber = settings.whatsappNumber
 
   return (
     <div className="vc-root">
@@ -33,19 +59,19 @@ export default async function ServicesPage({
           about: tNav('about'),
           cta: tNav('cta'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       {/* isPage=true: elimina border-radius superior y aumenta paddingTop para la nav */}
       <Services
-        locale={locale}
+        services={services}
         t={{
           label: tSrv('label'),
           title: tSrv('title'),
           sub: tSrv('sub'),
           cta: tSrv('cta'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
         isPage
       />
 
@@ -57,7 +83,7 @@ export default async function ServicesPage({
           button: tCta('button'),
           micro: tCta('micro'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       <Footer
@@ -65,16 +91,15 @@ export default async function ServicesPage({
         t={{
           legal: tFooter('legal'),
           tag: tFooter('tag'),
-          services: tNav('services'),
-          work: tNav('work'),
-          about: tNav('about'),
-          contact: tNav('contact'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
+        email={settings.email}
+        instagramUrl={settings.instagramUrl}
+        tiktokUrl={settings.tiktokUrl}
       />
 
       <WhatsAppFab
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
         labelText={tFab('label')}
         tipText={tFab('tip')}
       />

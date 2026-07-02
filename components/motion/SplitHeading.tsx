@@ -33,12 +33,10 @@ export function SplitHeading({
     // Variables declaradas fuera del rAF para que el cleanup las alcance
     let split: InstanceType<typeof SplitText> | null = null
     let tween: gsap.core.Tween | null = null
-    let raf: number
-
     // requestAnimationFrame garantiza que el navegador pintó el layout y
     // las fuentes están disponibles — sin necesidad de .then() asíncrono.
     // Esto hace que el cleanup sea síncrono y React Strict Mode funcione.
-    raf = requestAnimationFrame(() => {
+    const raf = requestAnimationFrame(() => {
       if (!ref.current) return
 
       split = new SplitText(el, { type: splitBy })

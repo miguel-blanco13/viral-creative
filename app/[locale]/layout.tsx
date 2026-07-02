@@ -4,8 +4,10 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale, getMessages } from 'next-intl/server'
 import { Space_Grotesk, Inter } from 'next/font/google'
 import { routing } from '@/i18n/routing'
+import { SITE_URL } from '@/lib/seo'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { LayoutGroup } from '@/components/motion/LayoutGroup'
+import { Analytics } from '@/components/analytics/Analytics'
 import '../globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -20,10 +22,41 @@ const inter = Inter({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: 'VIRAL CREATIVE — Agencia creativa digital',
-  description:
-    'Diseño, contenido, web y automatización. Un solo aliado creativo para marcas que quieren crecer en serio.',
+export async function generateMetadata({
+  params,
+}: {
+  // El layout tiene slot paralelo (@modal); el tipo de props debe incluirlo
+  // para satisfacer LayoutProps generado por Next, aunque no se use aquí.
+  params: Promise<{ locale: string }>
+  children: React.ReactNode
+  modal: React.ReactNode
+}): Promise<Metadata> {
+  const { locale } = await params
+  const es = locale === 'es'
+  const description = es
+    ? 'Diseño, contenido, web y automatización. Un solo aliado creativo para marcas que quieren crecer en serio.'
+    : 'Design, content, web and automation. One creative partner for brands that want to grow for real.'
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: 'VIRAL CREATIVE — Agencia creativa digital',
+      template: '%s — VIRAL CREATIVE',
+    },
+    description,
+    icons: { icon: '/images/logo.png', apple: '/images/logo.png' },
+    openGraph: {
+      type: 'website',
+      siteName: 'VIRAL CREATIVE',
+      title: 'VIRAL CREATIVE — Agencia creativa digital',
+      description,
+      url: SITE_URL,
+      locale,
+      images: ['/images/logo.png'],
+    },
+    twitter: { card: 'summary_large_image' },
+    robots: { index: true, follow: true },
+  }
 }
 
 // Pre-render de los locales para SSG
@@ -56,6 +89,11 @@ export default async function LocaleLayout({
             {modal}
           </LayoutGroup>
         </NextIntlClientProvider>
+        <Analytics
+          gaId={process.env.NEXT_PUBLIC_GA_ID}
+          pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID}
+          locale={locale}
+        />
       </body>
     </html>
   )

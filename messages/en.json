@@ -77,13 +77,13 @@
     "title": "The people behind the brand.",
     "sub": "Two complementary profiles with one goal: grow your business.",
     "member1": {
-      "name": "[Name]",
+      "name": "Diego Alejandro Duque Torres",
       "role": "Digital Strategy & Advertising",
       "bio": "Specialist in social media, market research, and digital advertising. Turns audiences into real clients through data-driven strategies and content that connects.",
       "tags": ["Social Media", "Advertising", "Market Research"]
     },
     "member2": {
-      "name": "[Name]",
+      "name": "Juan Miguel Blanco Perilla",
       "role": "Web Development & Automation",
       "bio": "Systems engineer with expertise in web design, development, and process automation. Builds the digital infrastructure that scales your business without friction.",
       "tags": ["Next.js", "Web Design", "Automation"]

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Nav } from '@/components/layout/Nav'
 import { Hero } from '@/components/home/Hero'
@@ -11,8 +12,31 @@ import { Faq } from '@/components/home/Faq'
 import { CtaFinal } from '@/components/home/CtaFinal'
 import { Footer } from '@/components/layout/Footer'
 import { WhatsAppFab } from '@/components/ui/WhatsAppFab'
+import type { Locale } from '@/lib/content-types'
+import {
+  getServices,
+  getProjects,
+  getTestimonials,
+  getFaqs,
+  getSiteSettings,
+} from '@/lib/content'
+import { pageMetadata } from '@/lib/seo'
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '573000000000'
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const es = locale === 'es'
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/',
+    description: es
+      ? 'Agencia creativa digital: branding, contenido, desarrollo web y automatización. Pide tu cotización por WhatsApp.'
+      : 'Digital creative agency: branding, content, web development and automation. Request your quote on WhatsApp.',
+  })
+}
 
 export default async function HomePage({
   params,
@@ -21,6 +45,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const loc = locale as Locale
 
   const [tNav, tHero, tSP, tProb, tSrv, tPF, tProc, tTst, tFaq, tCta, tFooter, tFab] =
     await Promise.all([
@@ -38,6 +63,16 @@ export default async function HomePage({
       getTranslations('fab'),
     ])
 
+  // Contenido editable desde el CMS (con fallback a los datos por defecto).
+  const [settings, services, projects, testimonials, faqs] = await Promise.all([
+    getSiteSettings(loc),
+    getServices(loc),
+    getProjects(loc),
+    getTestimonials(loc),
+    getFaqs(loc),
+  ])
+  const waNumber = settings.whatsappNumber
+
   return (
     <div className="vc-root" id="hero">
       <Nav
@@ -48,19 +83,19 @@ export default async function HomePage({
           about: tNav('about'),
           cta: tNav('cta'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Hero
           t={{
-            eyebrow: tHero('eyebrow'),
-            headline: tHero('headline'),
-            subhead: tHero('subhead'),
+            eyebrow: settings.hero.eyebrow ?? tHero('eyebrow'),
+            headline: settings.hero.headline ?? tHero('headline'),
+            subhead: settings.hero.subhead ?? tHero('subhead'),
             scroll: tHero('scroll'),
             cta: tHero('cta'),
           }}
-          waNumber={WA_NUMBER}
+          waNumber={waNumber}
         />
 
         <SocialProof
@@ -83,7 +118,7 @@ export default async function HomePage({
         />
 
         <ServicesPreview
-          locale={locale}
+          services={services}
           t={{
             label: tSrv('label'),
             title: tSrv('title'),
@@ -91,11 +126,12 @@ export default async function HomePage({
             cta: tSrv('cta'),
             viewAll: tSrv('viewAll'),
           }}
-          waNumber={WA_NUMBER}
+          waNumber={waNumber}
         />
 
         <PortfolioPreview
           locale={locale}
+          projects={projects}
           t={{
             label: tPF('label'),
             title: tPF('title'),
@@ -112,7 +148,7 @@ export default async function HomePage({
         />
 
         <Testimonials
-          locale={locale}
+          testimonials={testimonials}
           t={{
             label: tTst('label'),
             title: tTst('title'),
@@ -123,7 +159,7 @@ export default async function HomePage({
           }}
         />
 
-        <Faq locale={locale} t={{ label: tFaq('label'), title: tFaq('title') }} />
+        <Faq faqs={faqs} t={{ label: tFaq('label'), title: tFaq('title') }} />
 
         <CtaFinal
           t={{
@@ -133,7 +169,7 @@ export default async function HomePage({
             button: tCta('button'),
             micro: tCta('micro'),
           }}
-          waNumber={WA_NUMBER}
+          waNumber={waNumber}
         />
 
         <Footer
@@ -141,17 +177,16 @@ export default async function HomePage({
           t={{
             legal: tFooter('legal'),
             tag: tFooter('tag'),
-            services: tNav('services'),
-            work: tNav('work'),
-            about: tNav('about'),
-            contact: tNav('contact'),
           }}
-          waNumber={WA_NUMBER}
+          waNumber={waNumber}
+          email={settings.email}
+          instagramUrl={settings.instagramUrl}
+          tiktokUrl={settings.tiktokUrl}
         />
       </div>
 
       <WhatsAppFab
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
         labelText={tFab('label')}
         tipText={tFab('tip')}
       />

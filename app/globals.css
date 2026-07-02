@@ -60,7 +60,7 @@
 
 /* Keyframe animations */
 @keyframes vc-chevron { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
-@keyframes vc-ring { to { transform: rotate(360deg); } }
+@keyframes vc-pulse { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes vc-blob {
   0% { transform: translate(0, 0) scale(1); }
   33% { transform: translate(6%, -4%) scale(1.12); }
@@ -94,6 +94,206 @@ h1, h2, h3, .font-heading { font-family: var(--font-heading); }
 .vc-root ::selection { background: var(--primary); color: #fff; }
 .vc-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
+/* ── CtaButton (components/ui/CtaButton.tsx) ────────────────────
+   Hover (lift + shimmer) resuelto 100% en CSS: sin JS, sin re-renders. */
+.cta-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  overflow: hidden; /* recorta la banda de shimmer a la forma de la píldora */
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+
+.cta-btn--sm { padding: 12px 24px; font-size: var(--text-sm); }
+.cta-btn--md { padding: 14px 32px; font-size: var(--text-sm); }
+.cta-btn--lg { padding: 18px 48px; font-size: var(--text-base); }
+.cta-btn--block { width: 100%; justify-content: center; text-align: center; }
+
+.cta-btn__shimmer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent 0%, var(--accent) 50%, transparent 100%);
+  opacity: .7;
+  transform: translateX(-220%) skewX(-20deg);
+  transition: transform .7s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+.cta-btn:hover .cta-btn__shimmer { transform: translateX(220%) skewX(-20deg); }
+
+/* Anillos de pulso (sonar) — solo para withPulse (CTA final), no para nav */
+.cta-btn__pulse-wrap { position: relative; display: inline-flex; padding: 10px; margin-top: 8px; }
+.cta-btn__pulse {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-full);
+  animation: vc-pulse 2.2s ease-out infinite;
+}
+
+/* ── Portfolio section (components/home/PortfolioPreview.tsx, Portfolio.tsx) ──
+   Hover states resueltos en CSS puro — mismo criterio que .cta-btn: sin
+   tracking de cursor (mousemove), sin re-renders. */
+.portfolio-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(74, 141, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 141, 255, 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 25%, black 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 25%, black 0%, transparent 75%);
+  pointer-events: none;
+}
+
+.portfolio-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: var(--text-sm);
+  color: #fff;
+  padding: 14px 30px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border);
+  transition: border-color .3s ease, background .3s ease, box-shadow .3s ease;
+}
+.portfolio-more-btn:hover {
+  border-color: var(--primary);
+  background: var(--accent-glow);
+  box-shadow: var(--shadow-glow);
+}
+.portfolio-more-btn__arrow {
+  display: flex;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+.portfolio-more-btn:hover .portfolio-more-btn__arrow { transform: translate(3px, -3px); }
+
+/* ── ProjectCard (components/work/ProjectCard.tsx) ── */
+.portfolio-card {
+  position: relative;
+  border: 1.5px solid var(--border);
+  transition: border-color .35s ease, box-shadow .35s ease;
+}
+.portfolio-card:hover {
+  border-color: rgba(74, 141, 255, 0.45);
+  box-shadow: 0 24px 64px rgba(0,0,0,.5), 0 0 48px rgba(10,132,255,.16);
+}
+
+.portfolio-card__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: .5;
+}
+
+.portfolio-card__scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, rgba(150,195,255,.16), transparent);
+  transform: translateY(-160%);
+  transition: transform .9s cubic-bezier(.16,1,.3,1);
+  pointer-events: none;
+}
+.portfolio-card:hover .portfolio-card__scanline { transform: translateY(320%); }
+
+.portfolio-card__corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--primary);
+  opacity: 0;
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.portfolio-card__corner--tl { top: 12px; left: 12px; border-right: none; border-bottom: none; transform: translate(-5px,-5px); }
+.portfolio-card__corner--tr { top: 12px; right: 12px; border-left: none; border-bottom: none; transform: translate(5px,-5px); }
+.portfolio-card:hover .portfolio-card__corner { opacity: 1; transform: translate(0,0); }
+
+.portfolio-card__num {
+  transition: transform .5s cubic-bezier(.16,1,.3,1), opacity .5s ease;
+}
+.portfolio-card:hover .portfolio-card__num { transform: scale(1.05) translateX(6px); opacity: .7; }
+
+.portfolio-card__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px 1px rgba(74,141,255,.7);
+  flex-shrink: 0;
+}
+
+.portfolio-card__arrow {
+  transition: background .3s ease, border-color .3s ease, color .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+}
+.portfolio-card:hover .portfolio-card__arrow {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+/* ── ProjectModal (components/work/ProjectModal.tsx) ──
+   Mismo lenguaje HUD que ProjectCard, pero sin gate de :hover — el modal
+   ya está "abierto", los acentos van visibles desde el montaje. Los dos
+   bloques placeholder de imágenes NO se tocan: se resuelven cuando entre
+   contenido real de proyectos. */
+.portfolio-modal-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(74, 141, 255, .5) transparent;
+}
+.portfolio-modal-panel::-webkit-scrollbar { width: 6px; }
+.portfolio-modal-panel::-webkit-scrollbar-track { background: transparent; }
+.portfolio-modal-panel::-webkit-scrollbar-thumb { background: rgba(74, 141, 255, .35); border-radius: 999px; }
+.portfolio-modal-panel::-webkit-scrollbar-thumb:hover { background: rgba(74, 141, 255, .6); }
+
+.portfolio-modal__close {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: #fff;
+  transition: background .3s ease, border-color .3s ease, transform .3s cubic-bezier(.16,1,.3,1);
+}
+.portfolio-modal__close:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: rotate(90deg);
+}
+
+.portfolio-modal__corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--primary);
+  opacity: .5;
+  pointer-events: none;
+}
+.portfolio-modal__corner--tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+.portfolio-modal__corner--tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+.portfolio-modal__corner--bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+.portfolio-modal__corner--br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-modal__close { transition: none !important; }
+}
+
 /* Accesibilidad */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -101,5 +301,169 @@ h1, h2, h3, .font-heading { font-family: var(--font-heading); }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .portfolio-card__scanline,
+  .portfolio-card__corner,
+  .portfolio-card__num,
+  .portfolio-card__arrow,
+  .portfolio-more-btn__arrow { transition: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Team (Nosotros) — paneles split con tilt 3D + curtain reveal
+   ───────────────────────────────────────────────────────────── */
+.team-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 860px) {
+  .team-panels { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+
+.team-panel {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.team-panel:hover {
+  box-shadow: 0 24px 56px rgba(10, 20, 40, 0.12);
+  transform: translateY(-4px);
+}
+
+.team-panel__avatar-wrap {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--light-surface);
+}
+
+/* Glow ambiental — visible de inmediato, independiente del curtain-reveal
+   de la foto (ese lo controla Team.tsx vía [data-avatar-clip]). */
+.team-panel__ring {
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  filter: blur(48px);
+  animation: vc-blob 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.team-panel__body {
+  position: relative;
+  padding: 32px 36px 36px;
+}
+
+.team-panel__tag {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  background: rgba(10, 132, 255, 0.10);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+/* ─────────── Banner de consentimiento de cookies ─────────── */
+.vc-consent {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 300;
+  width: min(680px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background: rgba(11, 16, 38, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 18px 22px;
+}
+
+.vc-consent__text {
+  flex: 1;
+  min-width: 220px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.vc-consent__actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.vc-consent__btn {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s, color 0.2s;
+}
+
+.vc-consent__btn--solid {
+  background: var(--primary);
+  color: #fff;
+  border: 1.5px solid var(--primary);
+}
+
+.vc-consent__btn--ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border);
+}
+
+.vc-consent__btn--solid:hover {
+  opacity: 0.9;
+}
+
+.vc-consent__btn--ghost:hover {
+  color: #fff;
+  border-color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-consent__btn {
+    transition: none;
+  }
+}
+
+/* ─────────── Loader ─────────── */
+.vc-loader {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  animation: vc-spin 0.8s linear infinite;
+}
+
+@keyframes vc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-loader {
+    animation-duration: 2s;
   }
 }

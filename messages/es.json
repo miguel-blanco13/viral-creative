@@ -29,7 +29,7 @@
   "services": {
     "label": "Servicios",
     "title": "Todo lo que tu marca necesita, en un solo lugar.",
-    "sub": "Elige lo que más te urge, o cuéntanos tu situación y armamos el plan.",
+    "sub": "Elige el servicio que mejor se adapte a tus objetivos, o cuéntanos tu situación y diseñaremos la estrategia ideal.",
     "cta": "Cotizar este servicio →",
     "viewAll": "Ver todos los servicios →"
   },
@@ -77,13 +77,13 @@
     "title": "Las personas detrás de la marca.",
     "sub": "Dos perfiles complementarios con un solo objetivo: hacer crecer tu negocio.",
     "member1": {
-      "name": "[Nombre]",
+      "name": "Diego Alejandro Duque Torres",
       "role": "Estrategia Digital & Publicidad",
       "bio": "Especialista en redes sociales, estudio de mercado y publicidad digital. Convierte audiencias en clientes reales con estrategias basadas en datos y contenido que conecta.",
       "tags": ["Redes Sociales", "Publicidad", "Estudio de mercado"]
     },
     "member2": {
-      "name": "[Nombre]",
+      "name": "Juan Miguel Blanco Perilla",
       "role": "Desarrollo Web & Automatización",
       "bio": "Ingeniero de Sistemas con expertise en diseño y desarrollo web, y automatización de procesos. Construye la infraestructura digital que escala tu negocio sin fricciones.",
       "tags": ["Next.js", "Diseño Web", "Automatización"]

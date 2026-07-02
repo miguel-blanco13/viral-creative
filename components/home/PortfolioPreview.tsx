@@ -1,15 +1,16 @@
 'use client'
 
-import { PROJECTS } from './data'
 import { ProjectCard } from '@/components/work/ProjectCard'
 import { Reveal } from '@/components/motion/Reveal'
 import { Link } from '@/lib/navigation'
+import type { ProjectVM } from '@/lib/content-types'
 
 // Solo los 3 primeros proyectos, sin filtros ni AnimatePresence.
 // La interactividad completa vive en Portfolio.tsx (página /portafolio).
 
 interface PortfolioPreviewProps {
   locale: string
+  projects: ProjectVM[]
   t: {
     label: string
     title: string
@@ -20,8 +21,8 @@ interface PortfolioPreviewProps {
   }
 }
 
-export function PortfolioPreview({ locale, t }: PortfolioPreviewProps) {
-  const preview = PROJECTS.slice(0, 3)
+export function PortfolioPreview({ locale, projects, t }: PortfolioPreviewProps) {
+  const preview = projects.slice(0, 3)
 
   return (
     <section
@@ -35,15 +36,28 @@ export function PortfolioPreview({ locale, t }: PortfolioPreviewProps) {
         overflow: 'hidden',
       }}
     >
-      <div style={{ padding: '0 40px', maxWidth: '1100px', margin: '0 auto' }}>
+      {/* Grid técnico de fondo — refuerza el tono futurista sin competir con el contenido */}
+      <div className="portfolio-grid-bg" aria-hidden="true" />
+
+      <div style={{ padding: '0 40px', maxWidth: '1100px', margin: '0 auto', position: 'relative' }}>
         {/* Header */}
         <Reveal from="up" delay={0}>
-          <p style={{
-            color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '.12em',
-            fontSize: 'var(--text-sm)', fontFamily: 'var(--font-display)', fontWeight: 500, marginBottom: '20px',
-          }}>
-            {t.label}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '18px', marginBottom: '20px' }}>
+            <p style={{
+              color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '.12em',
+              fontSize: 'var(--text-sm)', fontFamily: 'var(--font-display)', fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}>
+              {t.label}
+            </p>
+            <span aria-hidden="true" style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, var(--border), transparent)' }} />
+            <span style={{
+              fontFamily: 'var(--font-display)', fontSize: 'var(--text-sm)', color: 'var(--muted)',
+              letterSpacing: '.06em', whiteSpace: 'nowrap',
+            }}>
+              N&deg; 0{preview.length}
+            </span>
+          </div>
         </Reveal>
 
         <Reveal from="up" delay={0.1}>
@@ -85,19 +99,13 @@ export function PortfolioPreview({ locale, t }: PortfolioPreviewProps) {
         {/* CTA → página completa de portafolio */}
         <Reveal from="up" delay={0.1} start="top 95%">
           <div style={{ marginTop: '48px', display: 'flex', justifyContent: 'center' }}>
-            <Link
-              href="/portfolio"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'var(--font-display)', fontWeight: 500, textTransform: 'uppercase',
-                letterSpacing: '.08em', fontSize: 'var(--text-sm)',
-                color: '#fff', borderBottom: '1.5px solid var(--primary)',
-                paddingBottom: '4px', transition: 'opacity .2s',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '.7' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1' }}
-            >
+            <Link href="/portfolio" className="portfolio-more-btn">
               {t.viewAll}
+              <span className="portfolio-more-btn__arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M7 7h10v10" />
+                </svg>
+              </span>
             </Link>
           </div>
         </Reveal>

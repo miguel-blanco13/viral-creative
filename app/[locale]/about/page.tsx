@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Nav } from '@/components/layout/Nav'
 import { Team } from '@/components/about/Team'
@@ -5,8 +6,26 @@ import { Process } from '@/components/home/Process'
 import { CtaFinal } from '@/components/home/CtaFinal'
 import { Footer } from '@/components/layout/Footer'
 import { WhatsAppFab } from '@/components/ui/WhatsAppFab'
+import type { Locale, TeamMemberVM } from '@/lib/content-types'
+import { getTeam, getSiteSettings } from '@/lib/content'
+import { pageMetadata } from '@/lib/seo'
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '573000000000'
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const es = locale === 'es'
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/about',
+    title: es ? 'Nosotros' : 'About',
+    description: es
+      ? 'Quiénes somos: el equipo detrás de VIRAL CREATIVE y cómo trabajamos.'
+      : 'Who we are: the team behind VIRAL CREATIVE and how we work.',
+  })
+}
 
 export default async function AboutPage({
   params,
@@ -15,6 +34,7 @@ export default async function AboutPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const loc = locale as Locale
 
   const [tNav, tAbout, tTeam, tProc, tCta, tFooter, tFab] = await Promise.all([
     getTranslations('nav'),
@@ -26,6 +46,35 @@ export default async function AboutPage({
     getTranslations('fab'),
   ])
 
+  const [settings, cmsTeam] = await Promise.all([
+    getSiteSettings(loc),
+    getTeam(loc),
+  ])
+  const waNumber = settings.whatsappNumber
+
+  // Equipo desde el CMS; si aún no hay miembros, se usan los textos de i18n.
+  const members: TeamMemberVM[] =
+    cmsTeam.length > 0
+      ? cmsTeam
+      : [
+          {
+            id: 'member1',
+            name: tTeam('member1.name'),
+            role: tTeam('member1.role'),
+            bio: tTeam('member1.bio'),
+            tags: tTeam.raw('member1.tags') as string[],
+            photoUrl: null,
+          },
+          {
+            id: 'member2',
+            name: tTeam('member2.name'),
+            role: tTeam('member2.role'),
+            bio: tTeam('member2.bio'),
+            tags: tTeam.raw('member2.tags') as string[],
+            photoUrl: null,
+          },
+        ]
+
   return (
     <div className="vc-root">
       <Nav
@@ -36,7 +85,7 @@ export default async function AboutPage({
           about: tNav('about'),
           cta: tNav('cta'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       {/* Hero de la página */}
@@ -94,25 +143,13 @@ export default async function AboutPage({
         </div>
       </section>
 
-      {/* Equipo */}
-      {/* tTeam.raw() devuelve el valor crudo del JSON — necesario para arrays */}
+      {/* Equipo — desde el CMS (o textos de i18n como fallback) */}
       <Team
+        members={members}
         t={{
           label: tTeam('label'),
           title: tTeam('title'),
           sub: tTeam('sub'),
-          member1: {
-            name: tTeam('member1.name'),
-            role: tTeam('member1.role'),
-            bio: tTeam('member1.bio'),
-            tags: tTeam.raw('member1.tags') as string[],
-          },
-          member2: {
-            name: tTeam('member2.name'),
-            role: tTeam('member2.role'),
-            bio: tTeam('member2.bio'),
-            tags: tTeam.raw('member2.tags') as string[],
-          },
         }}
       />
 
@@ -130,7 +167,7 @@ export default async function AboutPage({
           button: tCta('button'),
           micro: tCta('micro'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
       />
 
       <Footer
@@ -138,16 +175,15 @@ export default async function AboutPage({
         t={{
           legal: tFooter('legal'),
           tag: tFooter('tag'),
-          services: tNav('services'),
-          work: tNav('work'),
-          about: tNav('about'),
-          contact: tNav('contact'),
         }}
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
+        email={settings.email}
+        instagramUrl={settings.instagramUrl}
+        tiktokUrl={settings.tiktokUrl}
       />
 
       <WhatsAppFab
-        waNumber={WA_NUMBER}
+        waNumber={waNumber}
         labelText={tFab('label')}
         tipText={tFab('tip')}
       />

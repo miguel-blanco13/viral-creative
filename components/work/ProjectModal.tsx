@@ -1,16 +1,20 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useId, useRef } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
-import type { Project } from '@/components/home/data'
+import type { ProjectVM } from '@/lib/content-types'
 import { lenisStore } from '@/lib/lenis'
 
 interface ProjectModalProps {
-  project: Project
+  project: ProjectVM
   locale: string
   t: { back: string; result: string; img: string }
 }
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
 
 /**
  * ProjectModal — Overlay estilo obys.agency con Motion layoutId.
@@ -23,12 +27,14 @@ interface ProjectModalProps {
  *
  * AnimatePresence maneja el exit animation cuando se cierra.
  */
-export function ProjectModal({ project, locale, t }: ProjectModalProps) {
+export function ProjectModal({ project, t }: ProjectModalProps) {
   const router = useRouter()
-  const es = locale === 'es'
+  const hasHeroImage = Boolean(project.thumbnailUrl)
   const panelRef = useRef<HTMLDivElement>(null)
+  const previouslyFocused = useRef<HTMLElement | null>(null)
+  const titleId = useId()
 
-  const dismiss = () => router.back()
+  const dismiss = useCallback(() => router.back(), [router])
 
   useEffect(() => {
     // 1. Detener Lenis para que no mueva la página de fondo.
@@ -49,6 +55,49 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
       lenisStore.start()
     }
   }, [])
+
+  // Accesibilidad de diálogo: Escape para cerrar, focus trap dentro del
+  // panel, foco inicial al montar y restauración del foco previo al
+  // desmontar (vuelve a la ProjectCard que disparó la navegación).
+  useEffect(() => {
+    previouslyFocused.current = document.activeElement as HTMLElement | null
+    panelRef.current?.focus()
+
+    const getFocusable = () => {
+      const panel = panelRef.current
+      if (!panel) return [] as HTMLElement[]
+      return Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+    }
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        dismiss()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const focusable = getFocusable()
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      previouslyFocused.current?.focus()
+    }
+  }, [dismiss])
 
   return (
     <AnimatePresence>
@@ -75,6 +124,11 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
         key="modal"
         ref={panelRef}
         layoutId={project.slug}
+        className="portfolio-modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         style={{
           position: 'fixed',
           inset: '4vh 5vw',
@@ -91,6 +145,7 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
         <button
           aria-label="Cerrar"
           onClick={dismiss}
+          className="portfolio-modal__close"
           style={{
             position: 'sticky',
             top: '18px',
@@ -100,9 +155,6 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
             width: '44px',
             height: '44px',
             borderRadius: 'var(--radius-full)',
-            background: 'var(--surface-2)',
-            border: '1px solid var(--border)',
-            color: '#fff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -128,43 +180,71 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
             overflow: 'hidden',
           }}
         >
+          {/* Imagen real del CMS (cover). Si no hay, placeholder con número. */}
+          {hasHeroImage && (
+            <Image
+              src={project.thumbnailUrl as string}
+              alt={project.name}
+              fill
+              sizes="90vw"
+              priority
+              style={{ objectFit: 'cover' }}
+            />
+          )}
+          {/* Grid técnico — mismo tratamiento que ProjectCard */}
+          <div className="portfolio-card__grid" aria-hidden="true" />
+          {/* Frame HUD — visible desde el montaje, sin gate de hover */}
+          <span className="portfolio-modal__corner portfolio-modal__corner--tl" aria-hidden="true" />
+          <span className="portfolio-modal__corner portfolio-modal__corner--tr" aria-hidden="true" />
+          <span className="portfolio-modal__corner portfolio-modal__corner--bl" aria-hidden="true" />
+          <span className="portfolio-modal__corner portfolio-modal__corner--br" aria-hidden="true" />
           <div style={{
             position: 'absolute',
             inset: 0,
             background: `radial-gradient(circle at 30% 50%, ${project.accent}33 0%, transparent 65%)`,
           }} />
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: 'clamp(5rem, 15vw, 12rem)',
-            color: 'rgba(255,255,255,0.05)',
-            letterSpacing: '-.04em',
-            userSelect: 'none',
-            position: 'relative',
-            zIndex: 1,
-          }}>
-            {project.n}
-          </span>
+          {/* Número — contorno blueprint, solo como placeholder sin imagen */}
+          {!hasHeroImage && (
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: 'clamp(5rem, 15vw, 12rem)',
+              color: 'transparent',
+              WebkitTextStroke: '1.5px rgba(255,255,255,0.14)',
+              letterSpacing: '-.04em',
+              userSelect: 'none',
+              position: 'relative',
+              zIndex: 1,
+              opacity: 0.6,
+            }}>
+              {project.n}
+            </span>
+          )}
         </motion.div>
 
         {/* Contenido */}
         <div style={{ padding: '48px 56px 80px', maxWidth: '860px' }}>
           <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
             fontSize: '.74rem',
             textTransform: 'uppercase',
             letterSpacing: '.08em',
             color: 'var(--accent)',
-            background: 'var(--accent-glow)',
-            padding: '5px 12px',
+            border: '1px solid rgba(74,141,255,0.28)',
+            padding: '5px 12px 5px 10px',
             borderRadius: 'var(--radius-full)',
-            display: 'inline-block',
+            width: 'fit-content',
             marginBottom: '18px',
           }}>
-            {es ? project.catEs : project.catEn}
+            <span className="portfolio-card__dot" aria-hidden="true" />
+            {project.category}
           </span>
 
           {/* Título — morph desde la card */}
           <motion.h2
+            id={titleId}
             layoutId={`${project.slug}-title`}
             style={{
               fontFamily: 'var(--font-display)',
@@ -191,7 +271,7 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
               marginBottom: '48px',
             }}
           >
-            {es ? project.descEs : project.descEn}
+            {project.description}
           </motion.p>
 
           {/* Grid de imágenes placeholder */}
@@ -206,27 +286,48 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
               marginBottom: '40px',
             }}
           >
-            {[0, 1].map((j) => (
-              <div
-                key={j}
-                style={{
-                  background: `linear-gradient(135deg, ${project.colorA}cc 0%, ${project.colorB}cc 100%)`,
-                  borderRadius: 'var(--radius-md)',
-                  minHeight: '200px',
-                  border: '1px solid var(--border)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(255,255,255,0.2)',
-                  fontSize: 'var(--text-sm)',
-                  fontFamily: 'var(--font-display)',
-                  letterSpacing: '.06em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {t.img}
-              </div>
-            ))}
+            {project.imageUrls.length > 0
+              ? project.imageUrls.map((url, j) => (
+                  <div
+                    key={j}
+                    style={{
+                      position: 'relative',
+                      minHeight: '240px',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={url}
+                      alt={`${project.name} — ${j + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                ))
+              : [0, 1].map((j) => (
+                  <div
+                    key={j}
+                    style={{
+                      background: `linear-gradient(135deg, ${project.colorA}cc 0%, ${project.colorB}cc 100%)`,
+                      borderRadius: 'var(--radius-md)',
+                      minHeight: '200px',
+                      border: '1px solid var(--border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'rgba(255,255,255,0.2)',
+                      fontSize: 'var(--text-sm)',
+                      fontFamily: 'var(--font-display)',
+                      letterSpacing: '.06em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {t.img}
+                  </div>
+                ))}
           </motion.div>
 
           {/* Resultado */}
@@ -252,7 +353,7 @@ export function ProjectModal({ project, locale, t }: ProjectModalProps) {
               fontSize: 'var(--text-h3)',
               marginTop: '10px',
             }}>
-              {es ? project.resultEs : project.resultEn}
+              {project.result}
             </p>
           </motion.div>
         </div>

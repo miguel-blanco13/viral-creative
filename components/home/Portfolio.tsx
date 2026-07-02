@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { PROJECTS, FILTERS } from './data'
+import { FILTERS } from './data'
 import { ProjectCard } from '@/components/work/ProjectCard'
 import { Reveal } from '@/components/motion/Reveal'
+import type { ProjectVM } from '@/lib/content-types'
 
 interface PortfolioProps {
   locale: string
+  projects: ProjectVM[]
   t: {
     label: string
     title: string
@@ -33,11 +35,11 @@ interface PortfolioProps {
  * cuando un proyecto se filtra, sale con opacity 0 + scale; cuando entra,
  * hace el recorrido inverso. LayoutGroup sincroniza los layout animations.
  */
-export function Portfolio({ locale, t, isPage = false }: PortfolioProps) {
+export function Portfolio({ locale, projects, t, isPage = false }: PortfolioProps) {
   const [activeFilter, setActiveFilter] = useState('all')
   const es = locale === 'es'
 
-  const filtered = PROJECTS.filter(
+  const filtered = projects.filter(
     (p) => activeFilter === 'all' || p.cat === activeFilter
   )
 
@@ -51,6 +53,10 @@ export function Portfolio({ locale, t, isPage = false }: PortfolioProps) {
         paddingTop: isPage ? '160px' : '128px',
         paddingBottom: '128px',
         overflow: 'hidden',
+        // isPage: ocupa el espacio restante del flex column de vc-root,
+        // así el footer queda pegado al fondo aunque el filtro deje
+        // pocos (o ningún) proyecto visible.
+        ...(isPage ? { flex: 1 } : {}),
       }}
     >
       <div style={{ padding: '0 40px', maxWidth: '1100px', margin: '0 auto' }}>
